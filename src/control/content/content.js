@@ -51,7 +51,7 @@ class Content extends React.Component {
 
   getWithDynamicData = () => {
     return new Promise((success, reject) => {
-      return buildfire.datastore.getWithDynamicData((err, result) => {
+      return buildfire.datastore.getWithDynamicData('content', (err, result) => {
         if (err) return reject(err);
         return success(result);
       });
@@ -60,7 +60,8 @@ class Content extends React.Component {
 
   saveData = (data) => {
     return new Promise((success, reject) => {
-      return buildfire.datastore.save(data, (err, result) => {
+      return buildfire.datastore.save(data, 'content', (err, result) => {
+        console.warn(err, result, '::saveData::');
         if (err) return reject(err);
         return success(result);
       });
@@ -72,16 +73,14 @@ class Content extends React.Component {
   }
 
   handleOnChangeTitle = (event) => {
-    return this.saveData({
+    const newState = {
       ...this.state,
       content: {
         title: event.currentTarget.value
       }
-    })
-    .then((result) => {
-      this.setState((prevState) => this.getTheNewState({ ...prevState, ...result.data }));
-    })
-    .catch((err) => {
+    };
+    this.setState(() => this.getTheNewState(newState));
+    this.saveData(newState).catch((err) => {
       console.error('Error saving data:', err);
     });
   }
@@ -101,7 +100,7 @@ class Content extends React.Component {
     });
   }
 
-  confirmNotofication =  (params) => {
+  confirmNotification =  (params) => {
     return new Promise((success, reject) => {
       return buildfire.notifications.confirm(params, () => {
         if (!params) return reject();
@@ -111,7 +110,7 @@ class Content extends React.Component {
   }
 
   handleRemoveItem = (event, pluginToDelete) => {
-    this.confirmNotofication({
+    this.confirmNotification({
       title: 'Remove Feature',
       message: '<p>Are you sure you want to do this?</p><p class="margin-zero">Note: If you would like to add it again, you can do so by clicking the button above.</p>',
       buttonLabels: ['Delete', 'Cancel'],

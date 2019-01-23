@@ -2,7 +2,7 @@ import React from 'react';
 import './index.css';
 
 class CategoryFolderWidget extends React.Component {
-
+  onUpdateEvent = null;
   state = {
     _buildfire: {
       plugins: {
@@ -45,16 +45,16 @@ class CategoryFolderWidget extends React.Component {
       console.error(`Error loading data: ${err}`);
     });
 
-    this.onUpdate()
-    .then(() => this.loadData())
-    .then(result => {
+    this.onUpdateEvent = buildfire.datastore.onUpdate((result) => {
       console.warn('NEW_ON_UPDATE', result.data);
       this.setState((prevState) => this.getTheNewState({ ...prevState, ...result.data }));
-      this.forceUpdate();
     })
-    .catch((err) => {
-      console.error(`Error loading data:`, err);
-    });
+  }
+
+  componentWillUnmount() {
+    if (this.onUpdateEvent) {
+      this.onUpdateEvent.clear();
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -93,7 +93,7 @@ class CategoryFolderWidget extends React.Component {
 
   loadData = () => {
     return new Promise((success, reject) => {
-      return buildfire.datastore.getWithDynamicData((err, result) => {
+      return buildfire.datastore.getWithDynamicData('content', (err, result) => {
         if(err) {
           return reject(err);
         }
@@ -109,15 +109,6 @@ class CategoryFolderWidget extends React.Component {
         if (err) return reject(err);
         return success(result);
       });
-    });
-  }
-
-  onUpdate = () => {
-    return new Promise((success, reject) => {
-      return buildfire.datastore.onUpdate((result) => {
-        if(!result) return reject();
-        return success(result);
-      })
     });
   }
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { datastore, messaging, notifications } from './buildfire';
 import PluginsField from './components/PluginsField';
 
 class Content extends React.Component {
@@ -12,41 +11,78 @@ class Content extends React.Component {
       }
     },
     content: {
-      title: 'With the Folder plugin you can categorize existing plugins so that you can easily direct your users to the proper content.',
+      title: '',
       loadAllPlugins: false
     },
     design: {
       backgroundImage: null,
+      lgBackgroundImage: null
     },
+    pluginList: [],
     default: true
   };
 
   componentDidMount() {
-    datastore.getWithDynamicData()
+    this.getWithDynamicData()
     .then((result) => {
-      if (!Object.keys(result.data).length) {
-        datastore.save(this.state);
+      if (result.data && !Object.keys(result.data).length) {
+        this.saveData(this.state);
       } else {
-        this.setState(() => result.data);
+        this.setState((prevState) => this.getTheNewState({ ...prevState, ...result.data }));
       }
     })
     .catch((err) => {
-      console.error(`Error saving data: ${err}`);
+      console.error('Error saving data:', err);
     });
   }
 
-  handleOnChangeTitle = (newTitle) => {
-    return datastore.save({
+  getTheNewState = (data) => {
+    const pluginList = data._buildfire.plugins.data.map((instanceId) => {
+      const pluginModel = data._buildfire.plugins.result
+        .filter((plugin) => plugin.data.instanceId === instanceId);
+      return pluginModel.length ? pluginModel[0] : {};
+    });
+    const newState = {
+      ...data,
+      pluginList
+    };
+    return newState;
+  }
+
+  getWithDynamicData = () => {
+    return new Promise((success, reject) => {
+      return buildfire.datastore.getWithDynamicData((err, result) => {
+        if (err) return reject(err);
+        return success(result);
+      });
+    });
+  }
+
+  saveData = (data) => {
+    return new Promise((success, reject) => {
+      return buildfire.datastore.save(data, (err, result) => {
+        if (err) return reject(err);
+        return success(result);
+      });
+    });
+  }
+
+  sendMessageToWidget = (...params) => {
+    return buildfire.messaging.sendMessageToWidget(params);
+  }
+
+  handleOnChangeTitle = (event) => {
+    return this.saveData({
       ...this.state,
       content: {
-        title: newTitle
+        title: event.currentTarget.value
       }
     })
     .then((result) => {
-      this.setState(() => result.data);
+      this.setState((prevState) => this.getTheNewState({ ...prevState, ...result.data }));
     })
     .catch((err) => {
-      console.error(`Error saving data: ${err}`);
+      console.error('Error saving data:', err);
     });
   }
 
@@ -57,7 +93,7 @@ class Content extends React.Component {
       folderName: plugin.data.folderName,
       title: plugin.data.title
     };
-    messaging.sendMessageToWidget({
+    this.sendMessageToWidget({
       name: 'OPEN_PLUGIN',
       message: {
         data: pluginData
@@ -65,8 +101,17 @@ class Content extends React.Component {
     });
   }
 
+  confirmNotofication =  (params) => {
+    return new Promise((success, reject) => {
+      return buildfire.notifications.confirm(params, () => {
+        if (!params) return reject();
+        return success();
+      });
+    });
+  }
+
   handleRemoveItem = (event, pluginToDelete) => {
-    notifications.confirm({
+    this.confirmNotofication({
       title: 'Remove Feature',
       message: '<p>Are you sure you want to do this?</p><p class="margin-zero">Note: If you would like to add it again, you can do so by clicking the button above.</p>',
       buttonLabels: ['Delete', 'Cancel'],
@@ -86,16 +131,16 @@ class Content extends React.Component {
           }
         }
       };
-      return datastore.save(newState);
+      return this.saveData(newState);
     })
     .then(() => {
-      return datastore.getWithDynamicData();
+      return this.getWithDynamicData();
     })
     .then((result) => {
-      this.setState(() => result.data);
+      this.setState((prevState) => this.getTheNewState({ ...prevState, ...result.data }));
     })
     .catch((err) => {
-      console.error(`Error saving data: ${err}`);
+      console.error('Error saving data:', err);
     });
   }
 
@@ -103,17 +148,18 @@ class Content extends React.Component {
     const newState = {
       ...this.state,
       content: {
+        ...this.state.content,
         loadAllPlugins: !this.state.content.loadAllPlugins
       }
     };
-    datastore.save(newState).then(() => {
-      return datastore.getWithDynamicData();
+    this.saveData(newState).then(() => {
+      return this.getWithDynamicData();
     })
     .then((result) => {
-      this.setState(() => result.data);
+      this.setState((prevState) => this.getTheNewState({ ...prevState, ...result.data }));
     })
     .catch((err) => {
-      console.error(`Error saving data: ${err}`);
+      console.error('Error saving data:', err);
     });
   }
 
@@ -122,24 +168,23 @@ class Content extends React.Component {
       ...this.state,
       _buildfire: {
         plugins: {
-          dataType: 'pluginInstance',
+          ...this.state._buildfire.plugins,
           data: pluginList.map((plugin) => (
             plugin.data.instanceId
           ))
         }
       }
     };
-    datastore.save({}).then(() => {
-      return datastore.save(newState);
-    })
+    this.setState(() => this.getTheNewState(newState));
+    this.saveData(newState)
     .then(() => {
-      return datastore.getWithDynamicData();
+      return this.getWithDynamicData();
     })
     .then((result) => {
-      this.setState(() => result.data);
+      this.setState((prevState) => this.getTheNewState({ ...prevState, ...result.data }));
     })
     .catch((err) => {
-      console.error(`Error saving data: ${err}`);
+      console.error('Error saving data:', err);
     });
   }
 
@@ -156,14 +201,14 @@ class Content extends React.Component {
         }
       }
     };
-    datastore.save(newState).then(() => {
-      return datastore.getWithDynamicData();
+    this.saveData(newState).then(() => {
+      return this.getWithDynamicData();
     })
     .then((result) => {
-      this.setState(() => result.data);
+      this.setState((prevState) => this.getTheNewState({ ...prevState, ...result.data }));
     })
     .catch((err) => {
-      console.error(`Error saving data: ${err}`);
+      console.error('Error saving data:', err);
     });
   }
 
@@ -173,11 +218,7 @@ class Content extends React.Component {
         title,
         loadAllPlugins
       },
-      _buildfire: {
-        plugins: {
-          result: pluginList
-        }
-      }
+      pluginList
     } = this.state;
 
     return (

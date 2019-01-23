@@ -1,0 +1,10 @@
+.PluginsField__plugin-list {
+  box-sizing: border-box;
+  text-decoration: none solid rgb(95, 95, 95);
+  max-width: 540px;
+  border: 1px solid rgb(221, 221, 221);
+  border-radius: 4px 4px 4px 4px;
+  font: normal normal 300 normal 14px / 22px Muli, sans-serif;
+  margin: 20px 0px 0px;
+  outline: rgb(95, 95, 95) none 0px;
+}

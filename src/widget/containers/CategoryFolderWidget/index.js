@@ -4,18 +4,92 @@ import './index.css';
 class CategoryFolderWidget extends React.Component {
 
   state = {
-    categoryFilter: null,
-    content: {
-      title: ''
-    },
     _buildfire: {
       plugins: {
-        dataType: "pluginInstance",
+        dataType: 'pluginInstance',
         data: []
       }
     },
-    design: {}
+    content: {
+      title: '',
+      loadAllPlugins: false
+    },
+    design: {
+      backgroundImage: null,
+      lgBackgroundImage: null
+    },
+    pluginList: [],
+    default: true
   };
+
+  componentDidMount() {
+    this.loadData()
+    .then(result => {
+
+      if (result.data.content.loadAllPlugins) {
+        this.getAllPlugins()
+        .then((pluginProvider) => {
+          this.setState(() => ({
+            ...result.data,
+            pluginList: pluginProvider.result
+          }));
+        })
+      } else {
+        this.setState(() => ({
+          ...result.data,
+          pluginList: result.data._buildfire.plugins.result
+        }));
+      }
+    })
+    .catch((err) => {
+      console.error(`Error loading data: ${err}`);
+    });
+
+    this.onUpdate()
+    .then(() => this.loadData())
+    .then(result => {
+      console.warn('NEW_ON_UPDATE', result.data);
+      this.setState((prevState) => this.getTheNewState({ ...prevState, ...result.data }));
+      this.forceUpdate();
+    })
+    .catch((err) => {
+      console.error(`Error loading data:`, err);
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.content.loadAllPlugins 
+      !== prevState.content.loadAllPlugins) {
+
+      if (this.state.content.loadAllPlugins) {
+        this.getAllPlugins()
+        .then((pluginProvider) => {
+          this.setState(() => ({
+            ...this.state,
+            pluginList: pluginProvider.result
+          }));
+        })
+      } else {
+        this.setState(() => ({
+          ...this.state,
+          pluginList: this.state._buildfire.plugins.result
+        }));
+      }
+    }
+  }
+
+  getTheNewState = (data) => {
+    const pluginList = data._buildfire.plugins.data.map((instanceId) => {
+      const pluginModel = data._buildfire.plugins.result
+        .filter((plugin) => plugin.data.instanceId === instanceId);
+      return pluginModel.length ? pluginModel[0] : {};
+    });
+    const newState = {
+      ...data,
+      pluginList
+    };
+    return newState;
+  }
 
   loadData = () => {
     return new Promise((success, reject) => {
@@ -28,30 +102,45 @@ class CategoryFolderWidget extends React.Component {
     });
   }
 
+  getAllPlugins = () => {
+    return new Promise((success, reject) => {
+      let searchOptions = { pageIndex: 0, pageSize: 100 };  
+      return buildfire.pluginInstance.search(searchOptions, (err, result) => {
+        if (err) return reject(err);
+        return success(result);
+      });
+    });
+  }
+
   onUpdate = () => {
     return new Promise((success, reject) => {
       return buildfire.datastore.onUpdate((result) => {
-        if(!result) {
-          return reject();
-        }
+        if(!result) return reject();
         return success(result);
       })
     });
   }
 
-  componentDidMount() {
-    this.loadData()
-    .then(result => this.setState(() => result.data))
-    .catch((err) => {
-      console.error(`Error loading data: ${err}`);
-    });
+  getDynamicStyles = () => {
+    let backgroundImage = this.state.design.backgroundImage || this.state.design.lgBackgroundImage;
 
-    this.onUpdate()
-    .then(data => this.loadData())
-    .then(result => this.setState(() => result.data))
-    .catch((err) => {
-      console.error(`Error loading data:`, err);
-    });
+    if (this.state.design.lgBackgroundImage && window.innerWidth >= 600) {
+      //iPads
+      backgroundImage = this.state.design.lgBackgroundImage;
+    }
+
+    if (backgroundImage) {
+      const backgroundUrl = buildfire.imageLib.cropImage(backgroundImage, {
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+  
+      return {
+        background: `no-repeat url(${backgroundUrl})`,
+        backgroundSize: 'cover'
+      };  
+    }
+    return {};
   }
 
   render() {
@@ -63,11 +152,12 @@ class CategoryFolderWidget extends React.Component {
         plugins: {
           result = []
         }
-      }
+      },
+      pluginList
     } = this.state;
-    const pluginList = result || [];
+
     return (
-      <div className="CategoryFolderWidget">
+      <div style={this.getDynamicStyles()} className="CategoryFolderWidget">
         <div className="CategoryFolderWidget__container">
           <h1 className="CategoryFolderWidget__title">{title}</h1>
         </div>

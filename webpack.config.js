@@ -124,6 +124,11 @@ if (!DEV) {
       ]
     })
   });
+
+  WebpackConfig.module.rules.push({
+    test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+    loader: 'url-loader?limit=100000'
+  });
 }
 
 // Global settings

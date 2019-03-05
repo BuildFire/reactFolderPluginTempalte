@@ -1,0 +1,21 @@
+{
+  "author":"BuildFire",
+  "pluginName": "plugin-template-react",
+  "pluginDescription": "BuildFire plugin template for React",
+  "supportEmail":"support@buildfire.com",
+  "control": {
+    "content":{
+      "enabled": true
+    },
+    "design":{
+      "enabled": true
+    },
+    "settings":{
+      "enabled": false
+    }
+  },
+  "widget":{},
+  "features" : [],
+  "webpack": "8082",
+  "languages" : ["en"]
+}

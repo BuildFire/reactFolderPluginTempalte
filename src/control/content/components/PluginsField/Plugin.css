@@ -1,0 +1,176 @@
+.Plugin__row {
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  color: rgb(95, 95, 95);
+  height: 55.9922px;
+  min-height: 56px;
+  text-decoration: none solid rgb(95, 95, 95);
+  width: 532.781px;
+  border: 0px none rgb(95, 95, 95);
+  outline: rgb(95, 95, 95) none 0px;
+  padding: 8px 17px;
+}
+
+.Plugin__row .Plugin__sort-handle {
+  box-sizing: border-box;
+  color: rgb(153, 153, 153);
+  cursor: pointer;
+  height: 24px;
+  width: 24px;
+  border: 0px none rgb(153, 153, 153);
+  font: normal normal 400 normal 24px / 24px icomoon;
+  margin: 0px 12px 0px 0px;
+  outline: rgb(153, 153, 153) none 0px;
+}
+
+.Plugin__row .Plugin__sort-handle:after {
+  box-sizing: border-box;
+  color: rgb(153, 153, 153);
+  cursor: pointer;
+  text-decoration: none solid rgb(153, 153, 153);
+  border: 0px none rgb(153, 153, 153);
+  font: normal normal 400 normal 24px / 24px icomoon;
+  outline: rgb(153, 153, 153) none 0px;
+}
+
+.Plugin__row .Plugin__sort-handle:before {
+  box-sizing: border-box;
+  color: rgb(153, 153, 153);
+  content: '';
+  cursor: pointer;
+  text-decoration: none solid rgb(153, 153, 153);
+  border: 0px none rgb(153, 153, 153);
+  font: normal normal 400 normal 24px / 24px icomoon;
+  outline: rgb(153, 153, 153) none 0px;
+}
+
+.Plugin__row .Plugin__icon-image {
+  box-sizing: border-box;
+  color: rgb(95, 95, 95);
+  float: left;
+  height: 39.9844px;
+  text-align: center;
+  text-decoration: none solid rgb(95, 95, 95);
+  width: 64.9922px;
+  background: rgb(238, 240, 240) none repeat scroll 0% 0% / auto padding-box border-box;
+  border: 0px none rgb(95, 95, 95);
+  border-radius: 4px 4px 4px 4px;
+  font: normal normal 300 normal 14px / 36px Muli, sans-serif;
+  outline: rgb(95, 95, 95) none 0px;
+}
+
+.Plugin__row .Plugin__icon-image .Plugin__icon-image__image {
+  box-sizing: border-box;
+  color: rgb(95, 95, 95);
+  height: 39.9844px;
+  max-height: 100%;
+  max-width: 100%;
+  text-align: center;
+  text-decoration: none solid rgb(95, 95, 95);
+  vertical-align: middle;
+  width: 39.9844px;
+  border: 0px none rgb(95, 95, 95);
+  border-radius: 4px 4px 4px 4px;
+  font: normal normal 300 normal 14px / 36px Muli, sans-serif;
+  outline: rgb(95, 95, 95) none 0px;
+}
+
+.Plugin__row .Plugin__icon-image .Plugin__icon-image__icon {
+  bottom: 0px;
+  box-sizing: border-box;
+  color: rgb(95, 95, 95);
+  display: inline-block;
+  height: 19.5px;
+  text-align: center;
+  text-decoration: none solid rgb(95, 95, 95);
+  width: 20.0156px;
+  border: 0px none rgb(95, 95, 95);
+  margin: 10px 0px 0px;
+  outline: rgb(95, 95, 95) none 0px;
+}
+
+.Plugin__row .Plugin__title {
+  box-sizing: border-box;
+  padding-top: 7px;
+  padding-left: 10px;
+  color: rgb(9, 163, 238);
+  text-decoration: none solid rgb(9, 163, 238);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border: 0px none rgb(9, 163, 238);
+  font: normal normal 300 normal 14px / 22px Muli, sans-serif;
+  outline: rgb(9, 163, 238) none 0px;
+  transition: all 0.35s ease 0s;
+}
+
+.Plugin__row .Plugin__update-button {
+  bottom: -5px;
+  box-sizing: border-box;
+  color: rgb(95, 95, 95);
+  cursor: pointer;
+  display: inline-block;
+  height: 19.9922px;
+  left: 0px;
+  position: relative;
+  right: 0px;
+  text-decoration: none solid rgb(255, 255, 255);
+  top: 5px;
+  width: 19.9922px;
+  margin: 0px 0px 0px 17px;
+  outline: rgb(255, 255, 255) none 0px;
+  transition: all 0.35s ease 0s;
+}
+
+.Plugin__row .Plugin__delete-button {
+  bottom: -5px;
+  box-sizing: border-box;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  display: inline-block;
+  height: 19.9922px;
+  left: 0px;
+  position: relative;
+  right: 0px;
+  text-decoration: none solid rgb(255, 255, 255);
+  top: 5px;
+  width: 19.9922px;
+  background: rgb(237, 75, 75) none repeat scroll 0% 0% / auto padding-box border-box;
+  border: 0.984375px solid rgba(0, 0, 0, 0);
+  border-radius: 50px 50px 50px 50px;
+  font: normal normal 300 normal 14px / 22px Muli, sans-serif;
+  margin: 0px 0px 0px 17px;
+  outline: rgb(255, 255, 255) none 0px;
+  transition: all 0.35s ease 0s;
+}
+
+.Plugin__row .Plugin__delete-button:after {
+  bottom: -0.492188px;
+  box-sizing: border-box;
+  color: rgb(255, 255, 255);
+  content: '×';
+  cursor: pointer;
+  display: block;
+  height: 21px;
+  left: 0px;
+  position: absolute;
+  right: 0px;
+  text-align: center;
+  text-decoration: none solid rgb(255, 255, 255);
+  top: -2.5px;
+  width: 18.0234px;
+  border: 0px none rgb(255, 255, 255);
+  font: normal normal 600 normal 17px / 22px Muli, sans-serif;
+  outline: rgb(255, 255, 255) none 0px;
+}
+
+.Plugin__row .Plugin__info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-grow: 2;
+}
+
+.Plugin__row + .Plugin__row {
+  border-top: 1px solid #ddd;
+}
